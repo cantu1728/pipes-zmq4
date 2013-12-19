@@ -4,7 +4,6 @@ where
 import Pipes
 import Pipes.Parse (Parser, drawAll, isEndOfInput, evalStateT)
 import qualified Pipes.Parse as PP
-import qualified Pipes.Prelude as P
 import qualified Pipes.ZMQ4 as PZ
 import qualified System.ZMQ4 as Z
 
@@ -56,11 +55,11 @@ main = do
             Z.connect subSocket "inproc://pubserver"
             Z.subscribe subSocket (pack "10001")
 
-            evalStateT reporter (processedData subSocket)
+            evalStateT reportParser (processedData subSocket)
     where 
 
-        reporter :: Parser (Int, Int, Int) IO ()
-        reporter = loop
+        reportParser :: Parser (Int, Int, Int) IO ()
+        reportParser = loop
             where 
                 loop = do
                     records <- draw10 
