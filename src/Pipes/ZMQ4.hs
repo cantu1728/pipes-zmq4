@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Pipes.ZMQ3 (
+module Pipes.ZMQ4 (
 	fromZMQ,
     request
     ) where
@@ -8,7 +8,7 @@ module Pipes.ZMQ3 (
 import qualified Data.ByteString as B
 
 import Pipes
-import qualified System.ZMQ3 as Z
+import qualified System.ZMQ4 as Z
 import Control.Monad (forever)
 
 

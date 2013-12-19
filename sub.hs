@@ -2,16 +2,17 @@ module Main
 where
 
 import Pipes
-import Pipes.Parse 
+import Pipes.Parse (Parser, drawAll, isEndOfInput, evalStateT)
+import qualified Pipes.Parse as PP
 import qualified Pipes.Prelude as P
-import qualified Pipes.ZMQ3 as PZ
-import qualified System.ZMQ3 as Z
+import qualified Pipes.ZMQ4 as PZ
+import qualified System.ZMQ4 as Z
 
 import Control.Concurrent(threadDelay)
 import Control.Concurrent.Async
 import Control.Monad (forever, unless)
 import Control.Applicative((<$>), (<*>))
-
+import Control.Lens(zoom)
 import qualified Control.Foldl as L
 
 import Data.ByteString.Char8 (pack, unpack)
@@ -27,9 +28,6 @@ pubServerThread s = forever $ do
     let update = pack $ unwords [show zipcode, show temperature, show humidity]
     Z.send s [] update
 
-fold' :: (Monad m )=> L.Fold a b -> Producer a m () -> m b
-fold' myFold = case myFold of
-    L.Fold step begin done -> P.fold step begin done
 
 -- | This function will be part of foldl later on
 --   @fold (mapped f folder) list == fold folder (map f list)@
@@ -41,6 +39,8 @@ mapped f (L.Fold step begin done) = L.Fold step' begin done
 average :: L.Fold Int Int
 average = div <$> L.sum <*> L.length
 
+draw10 :: (Monad m) => Parser a m [a]
+draw10 = zoom (PP.splitAt 10) drawAll
 
 main :: IO ()
 main = do
@@ -59,11 +59,12 @@ main = do
             evalStateT reporter (processedData subSocket)
     where 
 
-        reporter :: StateT (Producer (Int, Int, Int) IO ()) IO ()
+        reporter :: Parser (Int, Int, Int) IO ()
         reporter = loop
             where 
                 loop = do
-                    (avgTemp, avgHum) <- fold' averages (input >-> P.take 10)
+                    records <- draw10 
+                    let (avgTemp, avgHum) = L.fold averages records
                     liftIO $ printf "-- Report: average temperature is %d°C, average humidity is %d%% \n" avgTemp avgHum   
                     eof <- isEndOfInput
                     unless eof loop

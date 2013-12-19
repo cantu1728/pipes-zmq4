@@ -1,6 +1,6 @@
-Name: pipes-zmq3
+Name: pipes-zmq4
 Version: 1.0.0
-Cabal-Version: >=1.8
+Cabal-Version: >=1.10
 Build-Type: Simple
 License: BSD3
 License-File: LICENSE
@@ -23,8 +23,8 @@ Library
         binary,
         bytestring       >= 0.10    && < 0.11,
         pipes            >= 4.0     && < 4.1,
-        zeromq3-haskell >= 0.5     && < 0.6
-    Exposed-Modules: Pipes.ZMQ3
+        zeromq4-haskell  >= 0.1     && < 0.2
+    Exposed-Modules: Pipes.ZMQ4
     GHC-Options: -O2
 
 executable sub
@@ -33,15 +33,15 @@ executable sub
   build-depends:  async >= 2,
                   base >= 4,
                   bytestring,
-                  foldl            >= 1.0     && < 1.1,
-                  pipes            >= 4.0     && < 4.1,
-                  pipes-concurrency >= 2.0    && < 2.1,
-                  pipes-parse      >= 2.0.0   && < 2.1,
-                  pipes-safe       >= 2.0.0   && < 2.1,
-                  pipes-zmq3       >= 1.0     && < 2.0,
+                  foldl             >= 1.0     && < 1.1,
+                  lens >= 3.10,
+                  pipes             >= 4.0     && < 4.1,
+                  pipes-concurrency >= 2.0     && < 2.1,
+                  pipes-parse       >= 3.0.0   && < 3.1,
+                  pipes-zmq4        >= 1.0     && < 2.0,
                   transformers,
                   random,
-                  zeromq3-haskell  >= 0.5
+                  zeromq4-haskell  >= 0.1
 
 executable echo
   default-language: Haskell2010
@@ -49,14 +49,12 @@ executable echo
   build-depends:  async >= 2,
                   base >= 4,
                   bytestring,
-                  foldl            >= 1.0     && < 1.1,
-                  pipes            >= 4.0     && < 4.1,
-                  pipes-bytestring >= 1.0     && < 2.0,
-                  pipes-concurrency >= 2.0    && < 2.1,
-                  pipes-parse      >= 2.0.0   && < 2.1,
-                  pipes-safe       >= 2.0.0   && < 2.1,
-                  pipes-zmq3       >= 1.0     && < 2.0,
+                  foldl             >= 1.0   && < 1.1,
+                  pipes             >= 4.0   && < 4.1,
+                  pipes-concurrency >= 2.0   && < 2.1,
+                  pipes-parse       >= 3.0   && < 3.1,
+                  pipes-zmq4        >= 1.0   && < 2.0,
                   transformers,
                   random,
-                  zeromq3-haskell  >= 0.5
+                  zeromq4-haskell  >= 0.1
   ghc-options:     -Wall -fno-warn-unused-do-bind

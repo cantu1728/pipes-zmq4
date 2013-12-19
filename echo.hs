@@ -2,10 +2,10 @@ module Main
 where
 
 import Pipes
-import qualified Pipes.ByteString as PB
-import qualified Pipes.ZMQ3 as PZ
-import qualified System.ZMQ3 as Z
-
+import qualified Pipes.Prelude as P
+import qualified Pipes.ZMQ4 as PZ
+import qualified System.ZMQ4 as Z
+import qualified Data.ByteString.Char8 as BC
 import Control.Concurrent (threadDelay, forkIO)
 import Control.Monad (forever)
 
@@ -22,7 +22,7 @@ main = do
 
             Z.connect client "inproc://echoserver"
             putStrLn "The client will send stdout to the echoserver and print it back"
-            runEffect $ PB.stdin >-> PZ.request client >-> PB.stdout
+            runEffect $ P.stdinLn >-> P.map (BC.pack) >-> PZ.request client >-> P.map (BC.unpack) >-> P.stdoutLn
     where
         echo s =
             forever $ do
