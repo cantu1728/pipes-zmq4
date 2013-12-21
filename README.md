@@ -9,7 +9,7 @@ Currently the purpose is purely educational. Do not hesitate to comment using Gi
 
 #### Echo (REP/REQ)
 
-The "echo" executable emulates an echo server. The client first connect to the echo server and waits for console input (stdin). The client socket will send console message to the server and wait back the echo reply from the server.  It then prints back this reply to the console (stdout).
+The "echo" executable emulates an echo server. The client first connects to the echo server and waits for console input (stdin). The client socket will send console message to the server and wait back for the reply from the server.  It then prints back the echo reply to the console (stdout).
 
 #### SUB (PUB/SUB)
 
