@@ -1,8 +1,10 @@
+{-# LANGUAGE RankNTypes #-}
+
 module Main
 where
 
 import Pipes
-import Pipes.Parse (Parser, drawAll, isEndOfInput, evalStateT)
+import Pipes.Parse (Parser, isEndOfInput, evalStateT)
 import qualified Pipes.Parse as PP
 import qualified Pipes.ZMQ4 as PZ
 import qualified System.ZMQ4 as Z
@@ -27,6 +29,8 @@ pubServerThread s = forever $ do
     let update = pack $ unwords [show zipcode, show temperature, show humidity]
     Z.send s [] update
 
+foldAll :: (Monad m) => L.Fold a b -> Parser a m b
+foldAll (L.Fold step begin done) = PP.foldAll step begin done
 
 -- | This function will be part of foldl later on
 --   @fold (mapped f folder) list == fold folder (map f list)@
@@ -37,9 +41,6 @@ mapped f (L.Fold step begin done) = L.Fold step' begin done
 
 average :: L.Fold Int Int
 average = div <$> L.sum <*> L.length
-
-draw10 :: (Monad m) => Parser a m [a]
-draw10 = zoom (PP.splitAt 10) drawAll
 
 main :: IO ()
 main = do
@@ -62,8 +63,7 @@ main = do
         reportParser = loop
             where 
                 loop = do
-                    records <- draw10 
-                    let (avgTemp, avgHum) = L.fold averages records
+                    (avgTemp, avgHum) <- zoom (PP.splitAt 10) (foldAll averages)
                     liftIO $ printf "-- Report: average temperature is %d°C, average humidity is %d%% \n" avgTemp avgHum   
                     eof <- isEndOfInput
                     unless eof loop
