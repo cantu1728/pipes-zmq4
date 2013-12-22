@@ -14,3 +14,6 @@ The "echo" executable emulates an echo server. The client first connects to the 
 
 Sub emulates the publication of weather data. A sub socket subscribes using zipcode as tag, then prints to stdout all data it receives. Every 10 records, it prints a summary report with the average temperature and humidity.
 
+##### Todos
+
+  * stop and resume the publication of weather data

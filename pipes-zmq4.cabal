@@ -17,6 +17,7 @@ Source-Repository head
     Location: https://github.com/PierreR/zpipes
 
 Library
+    default-language: Haskell2010
     Hs-Source-Dirs: src
     Build-Depends:
         base             >= 4.3     && < 5,
@@ -36,7 +37,6 @@ executable sub
                   foldl             >= 1.0     && < 1.1,
                   lens >= 3.10,
                   pipes             >= 4.0     && < 4.1,
-                  pipes-concurrency >= 2.0     && < 2.1,
                   pipes-parse       >= 3.0.0   && < 3.1,
                   pipes-zmq4        >= 1.0     && < 2.0,
                   transformers,
@@ -51,10 +51,8 @@ executable echo
                   bytestring,
                   foldl             >= 1.0   && < 1.1,
                   pipes             >= 4.0   && < 4.1,
-                  pipes-concurrency >= 2.0   && < 2.1,
-                  pipes-parse       >= 3.0   && < 3.1,
                   pipes-zmq4        >= 1.0   && < 2.0,
                   transformers,
                   random,
-                  zeromq4-haskell  >= 0.1
+                  zeromq4-haskell   >= 0.1
   ghc-options:     -Wall -fno-warn-unused-do-bind
