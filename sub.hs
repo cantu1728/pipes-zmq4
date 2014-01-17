@@ -29,13 +29,10 @@ pubServerThread s = forever $ do
     let update = pack $ unwords [show zipcode, show temperature, show humidity]
     Z.send s [] update
 
-foldAll :: (Monad m) => L.Fold a b -> Parser a m b
-foldAll (L.Fold step begin done) = PP.foldAll step begin done
-
 -- | This function will be part of foldl later on
---   @fold (mapped f folder) list == fold folder (map f list)@
-mapped :: (a -> b) -> L.Fold b r -> L.Fold a r
-mapped f (L.Fold step begin done) = L.Fold step' begin done
+--   @fold (premap f folder) list == fold folder (map f list)@
+premap :: (a -> b) -> L.Fold b r -> L.Fold a r
+premap f (L.Fold step begin done) = L.Fold step' begin done
   where
     step' x = step x . f
 
@@ -48,7 +45,7 @@ main = do
     Z.withContext $ \ctx ->
         Z.withSocket ctx Z.Pub $ \pubSocket ->
         Z.withSocket ctx Z.Sub $ \subSocket -> do
-            
+
             Z.bind pubSocket "inproc://pubserver"
             putStrLn "Starting pub server"
             async $ pubServerThread pubSocket
@@ -57,34 +54,34 @@ main = do
             Z.subscribe subSocket (pack "10001")
 
             evalStateT reportParser (processedData subSocket)
-    where 
+    where
 
         reportParser :: Parser (Int, Int, Int) IO ()
         reportParser = loop
-            where 
+            where
                 loop = do
-                    (avgTemp, avgHum) <- zoom (PP.splitAt 10) (foldAll averages)
-                    liftIO $ printf "-- Report: average temperature is %d°C, average humidity is %d%% \n" avgTemp avgHum   
+                    (avgTemp, avgHum) <- zoom (PP.splitAt 10) (L.purely PP.foldAll averages)
+                    liftIO $ printf "-- Report: average temperature is %d°C, average humidity is %d%% \n" avgTemp avgHum
                     eof <- isEndOfInput
                     unless eof loop
 
         averages :: L.Fold (Int, Int, Int) (Int, Int)
         averages =
             let avgTemp :: L.Fold (Int, Int, Int) Int
-                avgTemp = mapped (\(_, t, _) -> t) average
+                avgTemp = premap (\(_, t, _) -> t) average
 
                 avgHumidity :: L.Fold (Int, Int, Int) Int
-                avgHumidity = mapped (\(_, _, h) -> h) average
+                avgHumidity = premap (\(_, _, h) -> h) average
 
             in  (,) <$> avgTemp <*> avgHumidity
 
         processedData :: Z.Socket Z.Sub -> Producer (Int, Int, Int) IO ()
         processedData subSocket = for (PZ.fromZMQ subSocket) $ \bs -> do
             let [zipcode, temperature, humidity] = map read $ words (unpack bs)
-            liftIO $ printf "At NY City (%d), temperature of %d and humidity %d\n"  zipcode temperature humidity          
+            liftIO $ printf "At NY City (%d), temperature of %d and humidity %d\n"  zipcode temperature humidity
             yield (zipcode, temperature, humidity)
 
-            
+
 
 
 

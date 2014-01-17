@@ -10,7 +10,7 @@ Maintainer: PierreR@pi3r.com
 Bug-Reports: https://github.com/PierreR/zpipes
 Tested-With: GHC == 7.6.3
 Synopsis: Pipes/ZMQ bridge
-Description: 
+Description:
 Category: System, Pipes
 Source-Repository head
     Type: git
@@ -49,7 +49,7 @@ executable echo
   build-depends:  async >= 2,
                   base >= 4,
                   bytestring,
-                  foldl             >= 1.0   && < 1.1,
+                  foldl             >= 1.0.1 && < 1.1,
                   pipes             >= 4.0   && < 4.1,
                   pipes-zmq4        >= 1.0   && < 2.0,
                   transformers,
