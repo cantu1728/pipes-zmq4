@@ -11,6 +11,7 @@ import Control.Lens(zoom)
 import qualified Control.Foldl as L
 
 import qualified Data.ByteString.Char8 as BC
+import Data.Monoid((<>))
 
 import Pipes
 import Pipes.Parse (Parser, isEndOfInput, evalStateT)
@@ -21,15 +22,22 @@ import Text.Printf
 import System.Random (randomRIO)
 import qualified System.ZMQ4 as Z
 
+zipCode = "10001"
 
 pubServerThread :: Z.Sender t => Z.Socket t -> IO r
 pubServerThread s = forever $ do
-    threadDelay (25) -- be gentle with the CPU
+    threadDelay (10) -- be gentle with the CPU
     zipcode <- randomRIO (10000::Int, 11000)
     temperature <- randomRIO (-10::Int, 35)
     humidity <- randomRIO (10::Int, 60)
     let update = BC.pack $ unwords [show zipcode, show temperature, show humidity]
     Z.send s [] update
+
+bogusServerThread :: Z.Sender t => Z.Socket t -> IO r
+bogusServerThread s = forever $ do
+    threadDelay (5 * 1000 * 1000)
+    let bogusMsg = zipCode <> " 10 bogus"
+    Z.send s [] bogusMsg
 
 average :: L.Fold Int Int
 average = div <$> L.sum <*> L.length
@@ -44,9 +52,10 @@ main = do
             Z.bind pubSocket "inproc://pubserver"
             putStrLn "Starting pub server"
             async $ pubServerThread pubSocket
+            async $ bogusServerThread pubSocket
 
             Z.connect subSocket "inproc://pubserver"
-            Z.subscribe subSocket "10001"
+            Z.subscribe subSocket zipCode
 
             evalStateT reportParser (processedData subSocket)
     where
@@ -76,7 +85,9 @@ main = do
                 [_, Just (temp, _), Just(hum, _)] -> do
                     liftIO $ printf "At NY City, temperature of %d and humidity %d\n"  temp hum
                     yield (temp, hum)
-                [_, _, _]                         -> return()
+                [_, _, _]                         -> do
+                    liftIO $ putStrLn "BOGUS - Ignore"
+                    return()
 
 
 
