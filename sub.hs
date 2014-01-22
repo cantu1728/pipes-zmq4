@@ -24,6 +24,7 @@ import qualified System.ZMQ4 as Z
 
 zipCode = "10001"
 
+
 pubServerThread :: Z.Sender t => Z.Socket t -> IO r
 pubServerThread s = forever $ do
     threadDelay (10) -- be gentle with the CPU
