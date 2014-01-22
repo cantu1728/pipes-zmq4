@@ -1,15 +1,14 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Pipes.ZMQ4 (
-	fromZMQ,
-    request
+	  fromZMQ
+    , request
     ) where
 
+import Control.Monad (forever, unless)
 import qualified Data.ByteString as B
-
 import Pipes
 import qualified System.ZMQ4 as Z
-import Control.Monad (forever, unless)
 
 
 {-| Send upstream bytes into a request socket,

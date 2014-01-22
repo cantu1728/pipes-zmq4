@@ -9,21 +9,17 @@ import Control.Monad (forever, unless)
 import Control.Applicative((<$>), (<*>))
 import Control.Lens(zoom)
 import qualified Control.Foldl as L
-
 import qualified Data.ByteString.Char8 as BC
 import Data.Monoid((<>))
-
 import Pipes
 import Pipes.Parse (Parser, isEndOfInput, evalStateT)
 import qualified Pipes.Parse as PP
 import qualified Pipes.ZMQ4 as PZ
-
 import Text.Printf
 import System.Random (randomRIO)
 import qualified System.ZMQ4 as Z
 
 zipCode = "10001"
-
 
 pubServerThread :: Z.Sender t => Z.Socket t -> IO r
 pubServerThread s = forever $ do
