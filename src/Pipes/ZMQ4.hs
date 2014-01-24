@@ -5,8 +5,8 @@ module Pipes.ZMQ4 (
     , request
     ) where
 
-import Control.Monad (forever, unless)
-import qualified Data.ByteString as B
+import Control.Monad (forever)
+import Data.ByteString(ByteString)
 import Pipes
 import qualified System.ZMQ4 as Z
 
@@ -14,14 +14,15 @@ import qualified System.ZMQ4 as Z
 {-| Send upstream bytes into a request socket,
     wait/block and yield the reply
 -}
-request :: MonadIO m => Z.Socket Z.Req -> Pipe B.ByteString B.ByteString m ()
+request :: MonadIO m => Z.Socket Z.Req -> Pipe ByteString ByteString m ()
 request sock = for cat $ \b -> do
     rep <- liftIO (Z.send sock [] b >> Z.receive sock)
-    unless (B.null rep) $ yield rep
+    yield rep
 
 {-| Wait for a msg from a receiver 'Z.Socket' and yield it
+    Empty bytestrings are passed along as any other bytes
 -}
-fromZMQ :: (MonadIO m, Z.Receiver t)  => Z.Socket t -> Producer' B.ByteString m ()
+fromZMQ :: (MonadIO m, Z.Receiver t)  => Z.Socket t -> Producer' ByteString m ()
 fromZMQ sock  = forever $ do
     bs <- liftIO (Z.receive sock)
-    unless (B.null bs) $ yield bs
+    yield bs
