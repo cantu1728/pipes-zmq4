@@ -35,7 +35,7 @@ executable sub
                   base >= 4,
                   bytestring,
                   foldl             >= 1.0.2   && < 1.1,
-                  lens >= 3.10,
+                  lens              >= 4.0     && < 4.1,
                   pipes             >= 4.1     && < 4.2,
                   pipes-bytestring  >= 2.0     && < 2.1,
                   pipes-parse       >= 3.0.0   && < 3.1,
