@@ -1,23 +1,25 @@
-{-# LANGUAGE RankNTypes, OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes        #-}
 
 module Main
 where
 
-import Control.Concurrent(threadDelay)
-import Control.Concurrent.Async
-import Control.Monad (forever, unless)
-import Control.Applicative((<$>), (<*>))
-import Control.Lens(zoom)
-import qualified Control.Foldl as L
-import qualified Data.ByteString.Char8 as BC
-import Data.Monoid((<>))
-import Pipes
-import Pipes.Parse (Parser, isEndOfInput, evalStateT)
-import qualified Pipes.Parse as PP
-import qualified Pipes.ZMQ4 as PZ
-import Text.Printf
-import System.Random (randomRIO)
-import qualified System.ZMQ4 as Z
+import           Control.Applicative      ((<$>), (<*>))
+import           Control.Concurrent       (threadDelay)
+import           Control.Concurrent.Async
+import qualified Control.Foldl            as L
+import           Control.Lens             (zoom)
+import           Control.Monad            (forever, unless)
+import qualified Data.ByteString.Char8    as BC
+import           Data.Monoid              ((<>))
+import           Pipes
+import qualified Pipes.ByteString         as PB
+import           Pipes.Parse              (Parser, evalStateT, isEndOfInput)
+import qualified Pipes.Parse              as PP
+import qualified Pipes.ZMQ4               as PZ
+import           System.Random            (randomRIO)
+import qualified System.ZMQ4              as Z
+import           Text.Printf
 
 zipCode = "10001"
 

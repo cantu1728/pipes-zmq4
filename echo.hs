@@ -2,14 +2,14 @@
 module Main
 where
 
-import Control.Concurrent (threadDelay, forkIO)
-import Control.Monad (forever)
+import           Control.Concurrent    (forkIO, threadDelay)
+import           Control.Monad         (forever)
 import qualified Data.ByteString.Char8 as BC
-import  Data.Monoid((<>))
-import Pipes
-import qualified Pipes.Prelude as P
-import qualified Pipes.ZMQ4 as PZ
-import qualified System.ZMQ4 as Z
+import           Data.Monoid           ((<>))
+import           Pipes
+import qualified Pipes.Prelude         as P
+import qualified Pipes.ZMQ4            as PZ
+import qualified System.ZMQ4           as Z
 
 main :: IO ()
 main = do

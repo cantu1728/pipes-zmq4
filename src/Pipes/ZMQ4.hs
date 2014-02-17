@@ -5,10 +5,10 @@ module Pipes.ZMQ4 (
     , request
     ) where
 
-import Control.Monad (forever)
-import Data.ByteString(ByteString)
-import Pipes
-import qualified System.ZMQ4 as Z
+import           Control.Monad   (forever)
+import           Data.ByteString (ByteString)
+import           Pipes
+import qualified System.ZMQ4     as Z
 
 
 {-| Send upstream bytes into a request socket,
